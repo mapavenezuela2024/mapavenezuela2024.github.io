@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Venezuela Voting Map</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #map {
+            height: 70%;
+            width: 80%;
+            margin: auto;
+        }
+        #info {
+            overflow-y: auto;
+            width: 80%;
+            height: 25%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+        }
+
+        .close {
+            position: fixed;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="info">Click en una parroquia para ver los resultados de las mesas</div>
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Image">
+        </div>
+    </div>
+    <script>
+        // Load the GeoJSON file
+        fetch('./votes_geojson.json')
+            .then(response => response.json())
+            .then(venezuela_geojson => {
+                venezuela_geojson.features.forEach(feature => {
+                    if (feature.properties.ADM1_ES) {
+                        feature.properties.shapeName = feature.properties.ADM1_ES + ' - ' + feature.properties.ADM2_ES + ' - ' + feature.properties.ADM3_ES;
+                        feature.properties.color = -1; // Set to -1 to indicate no data
+                    } else {
+                        feature.properties.shapeName = feature.properties.EDO + ' - ' + feature.properties.MUN + ' - ' + feature.properties.PAR;
+                    }
+
+                    if (!feature.properties.mesas || feature.properties.mesas.length === 0) {
+                        feature.properties.mainInfo = 'No data';
+                    } else {
+                        // Format mesas information into a string, excluding the URL
+                        let maduro = 0;
+                        let gonzalez = 0;
+                        let otros = 0;
+                        for (let i = 0; i < feature.properties.mesas.length; i++) {
+                            maduro += feature.properties.mesas[i]['Nicolás Maduro Moros'];
+                            gonzalez += feature.properties.mesas[i]['Edmundo González'];
+                            otros += feature.properties.mesas[i]['OTROS'];
+                        }
+                        feature.properties.mainInfo = `Nicolás Maduro Moros: ${maduro}<br>Edmundo González: ${gonzalez}<br>OTROS: ${otros}`;
+                    }
+                });
+
+                // Prepare data for Plotly
+                const locations = venezuela_geojson.features.map(feature => feature.properties.shapeName);
+                const colors = venezuela_geojson.features.map(feature => feature.properties.color);
+                const hoverTexts = venezuela_geojson.features.map(feature => feature.properties.mainInfo);
+
+                const data = [{
+                    type: 'choroplethmapbox',
+                    geojson: venezuela_geojson,
+                    locations: locations,
+                    z: colors,
+                    featureidkey: 'properties.shapeName',
+                    text: hoverTexts,
+                    hovertemplate: '<b>%{location}</b><br>%{text}<extra></extra>',
+                    colorscale: [ // red to blue, with grey for no data
+                        [0, 'rgb(169,169,169)'], // Grey for no data
+                        [0.0000001, 'rgb(255, 0, 0)'], // Red
+                        [0.222222222222, 'rgb(244,109,67)'],
+                        [0.5, 'rgb(255,255,224)'], // Light Yellow
+                        [0.777777777778, 'rgb(116,173,209)'],
+                        [1, 'rgb(69,117,180)'] // Blue
+                    ],
+                    showscale: false,
+                    zmin: -1,
+                    zmax: 1,
+                    marker: {line: {width: 0}},
+                }];
+
+                const layout = {
+                    mapbox: {
+                        style: "carto-positron",
+                        center: {lat: 6.4238, lon: -66.5897},
+                        zoom: 5.5
+                    },
+                    margin: {r: 0, t: 0, b: 0, l: 0}
+                };
+
+                Plotly.newPlot('map', data, layout, {responsive: true});
+
+                // Add click event listener
+                document.getElementById('map').on('plotly_click', function(data) {
+                    const location = data.points[0].location;
+                    const feature = venezuela_geojson.features.find(f => f.properties.shapeName === location);
+                    if (feature) {
+                        const infoDiv = document.getElementById('info');
+                        infoDiv.innerHTML = `<h3>${location}</h3>${feature.properties.mainInfo}`;
+                        // Add detailed information from mesas
+                        feature.properties.mesas.forEach((mesa, index) => {
+                            const mesaDiv = document.createElement('div');
+                            mesaDiv.innerHTML = `
+                                <strong>Mesa ${index + 1}</strong><br>
+                                Nicolás Maduro Moros: ${mesa['Nicolás Maduro Moros']}<br>
+                                Edmundo González: ${mesa['Edmundo González']}<br>
+                                Otros: ${mesa['OTROS']}
+                            `;
+                            infoDiv.appendChild(mesaDiv);
+
+                            if (mesa.URL) {
+                                const img = document.createElement('img');
+                                img.src = mesa.URL;
+                                img.alt = 'Image';
+                                img.style.maxWidth = '100%';
+                                img.style.marginTop = '10px';
+                                const bttn = document.createElement('button');
+                                bttn.innerHTML = 'Abrir imagen del acta';
+                                bttn.onclick = function() {
+                                    const modal = document.getElementById("myModal");
+                                    const modalImg = document.getElementById("modalImage");
+                                    modal.style.display = "block";
+                                    modalImg.src = img.src;
+                                }
+                                infoDiv.appendChild(document.createElement('br'));
+                                infoDiv.appendChild(bttn);
+                            }
+                            infoDiv.appendChild(document.createElement('hr'));
+                        });
+                    }
+                });
+
+            })
+            .catch(error => console.error('Error loading the GeoJSON file:', error));
+
+            // Get the modal
+    const modal = document.getElementById("myModal");
+
+// Get the <span> element that closes the modal
+const span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+    </script>
+</body>
+</html>
