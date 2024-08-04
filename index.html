@@ -99,11 +99,11 @@
                         let gonzalez = 0;
                         let otros = 0;
                         for (let i = 0; i < feature.properties.mesas.length; i++) {
-                            maduro += feature.properties.mesas[i]['Nicolás Maduro Moros'];
-                            gonzalez += feature.properties.mesas[i]['Edmundo González'];
+                            maduro += feature.properties.mesas[i]['N. Maduro'];
+                            gonzalez += feature.properties.mesas[i]['E. González'];
                             otros += feature.properties.mesas[i]['OTROS'];
                         }
-                        feature.properties.mainInfo = `Nicolás Maduro Moros: ${maduro}<br>Edmundo González: ${gonzalez}<br>OTROS: ${otros}`;
+                        feature.properties.mainInfo = `N. Maduro: ${maduro}<br>E. González: ${gonzalez}<br>OTROS: ${otros}`;
                     }
                 });
 
@@ -157,8 +157,8 @@
                             const mesaDiv = document.createElement('div');
                             mesaDiv.innerHTML = `
                                 <strong>Mesa ${index + 1}</strong><br>
-                                Nicolás Maduro Moros: ${mesa['Nicolás Maduro Moros']}<br>
-                                Edmundo González: ${mesa['Edmundo González']}<br>
+                                N. Maduro: ${mesa['N. Maduro']}<br>
+                                E. González: ${mesa['E. González']}<br>
                                 Otros: ${mesa['OTROS']}
                             `;
                             infoDiv.appendChild(mesaDiv);
