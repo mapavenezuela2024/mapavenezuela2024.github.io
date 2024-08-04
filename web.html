@@ -80,7 +80,7 @@
     </div>
     <script>
         // Load the GeoJSON file
-        fetch('./votes_geojson.json')
+        fetch('./votes_geojson_min.json')
             .then(response => response.json())
             .then(venezuela_geojson => {
                 venezuela_geojson.features.forEach(feature => {
