@@ -106,14 +106,14 @@
                             gonzalez += feature.properties.mesas[i]['E. González'];
                             otros += feature.properties.mesas[i]['OTROS'];
                         }
-                        feature.properties.mainInfo = `N. Maduro: ${maduro}<br>E. González: ${gonzalez}<br>OTROS: ${otros}`;
+                        feature.properties.mainInfo = `N. Maduro: ${maduro}<br>E. González: ${gonzalez}<br>Otros: ${otros}`;
                     }
                 });
 
                 // Prepare data for Plotly
                 const locations = venezuela_geojson.features.map(feature => feature.properties.shapeName);
                 const colors = venezuela_geojson.features.map(feature => feature.properties.color);
-                const hoverTexts = venezuela_geojson.features.map(feature => feature.properties.mainInfo);
+                const hoverTexts = venezuela_geojson.features.map(feature => feature.properties.);
 
                 const data = [{
                     type: 'choroplethmapbox',
@@ -154,7 +154,7 @@
                     const feature = venezuela_geojson.features.find(f => f.properties.shapeName === location);
                     if (feature) {
                         const infoDiv = document.getElementById('info');
-                        infoDiv.innerHTML = `<h3>${location}</h3>${feature.properties.mainInfo}`;
+                        infoDiv.innerHTML = `<h3>${location}</h3><strong>Totales:</strong><br>${feature.properties.mainInfo}`;
                         // Add detailed information from mesas
                         feature.properties.mesas.forEach((mesa, index) => {
                             const mesaDiv = document.createElement('div');
