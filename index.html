@@ -113,7 +113,7 @@
                 // Prepare data for Plotly
                 const locations = venezuela_geojson.features.map(feature => feature.properties.shapeName);
                 const colors = venezuela_geojson.features.map(feature => feature.properties.color);
-                const hoverTexts = venezuela_geojson.features.map(feature => feature.properties.);
+                const hoverTexts = venezuela_geojson.features.map(feature => feature.properties.mainInfo);
 
                 const data = [{
                     type: 'choroplethmapbox',
