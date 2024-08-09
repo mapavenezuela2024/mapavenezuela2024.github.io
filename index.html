@@ -106,7 +106,7 @@
                             gonzalez += feature.properties.mesas[i]['E. González'];
                             otros += feature.properties.mesas[i]['OTROS'];
                         }
-                        feature.properties.mainInfo = `N. Maduro: ${maduro}<br>E. González: ${gonzalez}<br>Otros: ${otros}`;
+                        feature.properties.mainInfo = `N. Maduro: ${maduro} (${(maduro / (maduro + gonzalez + otros) * 100).toFixed(2)}%)<br>E. González: ${gonzalez} (${(gonzalez / (maduro + gonzalez + otros) * 100).toFixed(2)}%)<br>Otros: ${otros} (${(otros / (maduro + gonzalez + otros) * 100).toFixed(2)}%)`;
                     }
                 });
 
@@ -145,7 +145,6 @@
                     },
                     margin: {r: 0, t: 0, b: 0, l: 0}
                 };
-
                 Plotly.newPlot('map', data, layout, {responsive: true});
 
                 // Add click event listener
