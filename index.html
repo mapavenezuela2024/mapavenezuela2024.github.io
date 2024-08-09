@@ -30,6 +30,7 @@
         }
         main {
             flex-grow: 1;
+            overflow-y: auto;
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -42,18 +43,18 @@
         }
         #map {
             height: 70%;
-            width: 80%;
+            /* width: 80%; */
             margin: auto;
+            min-height: 300px;
         }
         #info {
             overflow-y: auto;
             width: 75%;
             height: 25%;
             padding: 10px;
-            margin: 10px;
             border: 1px solid #ddd;
             background: #f9f9f9;
-            margin: auto;
+            margin: 10px auto auto auto;
         }
         .modal {
             display: none;
@@ -114,9 +115,9 @@
             </div>
         </div>
     </main>
-    <footer>
+    <!-- <footer>
         <p>Creado con ❤️ desde 🇪🇸. <a href="https://github.com/mapavenezuela2024/mapavenezuela2024.github.io" target="_blank">Ver en GitHub</a></
-    </footer>
+    </footer> -->
     <script>
         // Load the GeoJSON file
         fetch('./votes_geojson_min.json')
