@@ -2,16 +2,43 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elecciones Venezuela 2024 por Parroquia</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
+            font-family: "Roboto", Arial, Helvetica, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        header, main, footer {
+            width: 100%;
+            /* max-width: 1200px; */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+        main {
+            flex-grow: 1;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
         }
         #map {
             height: 70%;
@@ -26,6 +53,7 @@
             margin: 10px;
             border: 1px solid #ddd;
             background: #f9f9f9;
+            margin: auto;
         }
         .modal {
             display: none;
@@ -73,14 +101,22 @@
     </style>
 </head>
 <body>
-    <div id="map"></div>
-    <div id="info">Click en una parroquia para ver los resultados de las mesas</div>
-    <div id="myModal" class="modal">
-        <span class="close">&times;</span>
-        <div class="modal-content">
-            <img id="modalImage" src="" alt="Image">
+    <header>
+        <h1>🇻🇪🇻🇪 Resultados Electorales 2024 por Parroquia</h1>
+    </header>
+    <main> 
+        <div id="map"></div>
+        <div id="info">Click en una parroquia para ver los resultados de las mesas</div>
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <div class="modal-content">
+                <img id="modalImage" src="" alt="Image">
+            </div>
         </div>
-    </div>
+    </main>
+    <footer>
+        <p>Creado con ❤️ desde 🇪🇸. <a href="https://github.com/mapavenezuela2024/mapavenezuela2024.github.io" target="_blank">Ver en GitHub</a></
+    </footer>
     <script>
         // Load the GeoJSON file
         fetch('./votes_geojson_min.json')
